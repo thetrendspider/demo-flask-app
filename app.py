@@ -15,7 +15,7 @@ def about():
 def contact():
     return render_template("contact.html")
 
-@app.route("/support")
+@app.route("/budget")
 def budget():
     data = {
         "date": "Jul 3, 07",
