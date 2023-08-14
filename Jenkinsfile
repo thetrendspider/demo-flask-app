@@ -20,10 +20,4 @@ pipeline {
             }
         }
     }
-
-    post {
-        always {
-            // Archive artifacts, clean up, or perform other post-build actions
-        }
-    }
 }
