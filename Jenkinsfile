@@ -1,16 +1,17 @@
 pipeline {
     agent any
     environment {
-        sonar_scanner_home = '/var/lib/jenkins'
+        scannerHome = '/var/lib/jenkins'
     }
 
     stages {
       stage('SonarQube analysis') {
         steps{
             script{
-            def sonar_scanner_home = tool 'sonarScanner';
+            def scannerHome = tool name: 'SonarQubeScanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+
             withSonarQubeEnv('sonarQube-7.6') {
-            sh "${sonar_scanner_home}/bin/sonar-scanner"
+            sh "${scannerHome}/bin/sonar-scanner"
             }
             }
         }
