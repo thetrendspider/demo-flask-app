@@ -1,8 +1,5 @@
 pipeline {
     agent any
-    environment {
-        scannerHome = '/var/lib/jenkins'
-    }
 
     stages {
       stage('SonarQube analysis') {
