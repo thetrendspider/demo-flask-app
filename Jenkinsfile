@@ -1,5 +1,9 @@
 pipeline {
     agent any
+    environment {
+        SONAR_SCANNER_HOME = '/opt/sonarqube'
+    }
+
     stages {
       stage('SonarQube analysis') {
         steps{
