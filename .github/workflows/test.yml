@@ -1,0 +1,15 @@
+
+name: Example Workflow
+
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check job status
+        run: |
+          if [ "${{ job.status }}" == "success" ]; then
+            echo "Job succeeded"
+          else
+            echo "Job failed"
+          fi
