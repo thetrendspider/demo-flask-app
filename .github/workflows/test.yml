@@ -1,4 +1,4 @@
-name: Example Workflow
+name: Example Workflow with Max Retry
 
 on: [push]
 
@@ -6,30 +6,32 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Check job status with retry
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run Tests with Retry Logic
+        id: run_tests
+        env:
+          RETRY_COUNT: 0
+          MAX_RETRIES: 3
         run: |
-          MAX_RETRIES=3
-          RETRY_COUNT=0
-          SUCCESS=false
-
-          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-            # Simulate a failure by forcing job.status to 'failure'
-            FAKE_JOB_STATUS="failure" 
-
-            if [ "$FAKE_JOB_STATUS" == "success" ]; then
-              echo "Job succeeded"
-              SUCCESS=true
+          for i in $(seq 1 ${{ env.MAX_RETRIES }}); do
+            echo "Attempt $i of ${{ env.MAX_RETRIES }}"
+            if npm test; then
+              echo "Tests passed on attempt $i"
               break
             else
-              echo "Job failed. Attempt $((RETRY_COUNT+1)) of $MAX_RETRIES."
-              RETRY_COUNT=$((RETRY_COUNT+1))
-              if [ $RETRY_COUNT -lt $MAX_RETRIES ]; then
-                echo "Retrying..."
-              fi
+              echo "Tests failed on attempt $i"
+              export RETRY_COUNT=$i
             fi
           done
+        continue-on-error: true
 
-          if [ "$SUCCESS" != "true" ]; then
-            echo "Max retries reached. Job failed."
-            exit 1
-          fi
+      - name: Fail if Max Retries Exceeded
+        if: steps.run_tests.outcome == 'failure' && env.RETRY_COUNT == env.MAX_RETRIES
+        run: |
+          echo "Max retries reached. Failing the job."
+          exit 1
