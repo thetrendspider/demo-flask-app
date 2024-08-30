@@ -13,7 +13,10 @@ jobs:
           SUCCESS=false
 
           while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-            if [ "${{ job.status }}" == "success" ]; then
+            # Simulate a failure by forcing job.status to 'failure'
+            FAKE_JOB_STATUS="failure" 
+
+            if [ "$FAKE_JOB_STATUS" == "success" ]; then
               echo "Job succeeded"
               SUCCESS=true
               break
