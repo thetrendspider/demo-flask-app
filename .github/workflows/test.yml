@@ -40,6 +40,3 @@ jobs:
         run: |
           echo "Max retries reached. Failing the job."
           exit 1
-
-      - name: Log Retry Count
-        run: echo "Final retry count: ${{ env.RETRY_COUNT }}"
