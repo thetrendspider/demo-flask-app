@@ -27,11 +27,6 @@ jobs:
           done
         continue-on-error: true
 
-    
-      - name: Check if Max Retries Reached
-        id: check_max_retries
-        run: echo "RETRIES=${{ env.RETRY_COUNT }}" >> $GITHUB_ENV
-
       - name: Fail if Max Retries Exceeded
         if: steps.run_tests.outcome == 'failure' && env.RETRY_COUNT == env.MAX_RETRIES
         run: |
