@@ -1,16 +1,27 @@
+name: Example Workflow with Max Retry
+
+on: [push]
 jobs:
-  my_job:
+  retry_job:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      max-attempts: 3
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
       
       - name: Run potentially failing task
-        run: |
-          # Your commands here
-          echo "Running a task that might fail"
-          # Simulating a potential failure
-          exit $(( $RANDOM % 2 ))
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          command: |
+            echo "Running a task that might fail"
+            # Simulating a potential failure with a 50% chance
+            exit $(( $RANDOM % 2 ))
+      
+      - name: Run if previous step succeeded
+        if: success()
+        run: echo "The task succeeded!"
+      
+      - name: Run if all attempts failed
+        if: failure()
+        run: echo "The task failed after all retry attempts"
