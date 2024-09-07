@@ -8,17 +8,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       
-      - name: Run task that fails first, succeeds second
+      - name: Run task with retry logic
         uses: nick-fields/retry@v2
         with:
           timeout_minutes: 10
           max_attempts: 3
           command: |
+            echo "Current attempt number: $GITHUB_RUN_ATTEMPT"
             if [[ "$GITHUB_RUN_ATTEMPT" == "1" ]]; then
               echo "This is the first attempt. Failing intentionally."
               exit 1
             else
-              echo "This is attempt number $GITHUB_RUN_ATTEMPT. Succeeding."
+              echo "This is not the first attempt. Succeeding."
               exit 0
             fi
       
@@ -29,3 +30,10 @@ jobs:
       - name: Run if all attempts failed
         if: failure()
         run: echo "The task failed after all retry attempts"
+
+      - name: Debug information
+        if: always()
+        run: |
+          echo "Workflow completed"
+          echo "Final GITHUB_RUN_ATTEMPT value: $GITHUB_RUN_ATTEMPT"
+          echo "Job status: ${{ job.status }}"
