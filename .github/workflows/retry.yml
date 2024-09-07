@@ -13,7 +13,7 @@ jobs:
         with:
           timeout_minutes: 10
           max_attempts: 3
-          command: |
+          run: |
              npm test
       
       - name: Run if previous step succeeded
