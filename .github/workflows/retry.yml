@@ -1,19 +1,24 @@
 name: Example Workflow with Max Retry
 
 on: [push]
-
 jobs:
-  my-job:
+  build:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        retry: [1, 2]
     steps:
-      - uses: actions/checkout@v3
-      - name: Run my command
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Run job with retry logic
         run: |
-          hostname
-          if [[ $? -eq 0 ]]; then
-            echo "Command succeeded on first attempt"
-            exit 0
-          fi
+          max_attempts=2
+          attempt=0
+          until [ $attempt -ge $max_attempts ]
+          do
+            attempt=$((attempt+1))
+            echo "Attempt $attempt..."
+            ./your_script.sh && break || echo "Attempt $attempt failed."
+            if [ $attempt -ge $max_attempts ]; then
+              echo "Job failed after $attempt attempts."
+              exit 1
+            fi
+          done
