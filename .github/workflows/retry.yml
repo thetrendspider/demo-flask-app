@@ -1,17 +1,21 @@
-name: Example Workflow with Max Retry
+name: My Workflow
 
-on: [push]
+on:
+  push:
+    branches: [main]
+
 jobs:
-  deploy:
+  my-job:
     runs-on: ubuntu-latest
     strategy:
       matrix:
         retry: [1, 2]
     steps:
       - uses: actions/checkout@v3
-      - name: Build Application
-        run: |
-          # Build commands here
-      - name: Deploy Application
+      - name: Run my command
         run: |
           hostname
+          if [[ $? -eq 0 ]]; then
+            echo "Command succeeded on first attempt"
+            exit 0
+          fi
