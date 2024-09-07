@@ -14,10 +14,4 @@ jobs:
           # Build commands here
       - name: Deploy Application
         run: |
-          if [[ "${{ runner.retry_count }}" -lt "${{ matrix.retry }}" ]]; then
-            # Deployment command
-            aws s3 sync ./dist s3://my-bucket
-          else
-            echo "Deployment failed after ${matrix.retry} retries"
-            exit 1
-          fi
+          hostname
