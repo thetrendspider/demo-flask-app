@@ -8,15 +8,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       
-      - name: Run potentially failing task
+      - name: Run task that fails first, succeeds second
         uses: nick-fields/retry@v2
         with:
           timeout_minutes: 10
           max_attempts: 3
           command: |
-            echo "Running a task that might fail"
-            # Simulating a potential failure with a 50% chance
-            exit $(( $RANDOM % 2 ))
+            if [[ "$GITHUB_RUN_ATTEMPT" == "1" ]]; then
+              echo "This is the first attempt. Failing intentionally."
+              exit 1
+            else
+              echo "This is attempt number $GITHUB_RUN_ATTEMPT. Succeeding."
+              exit 0
+            fi
       
       - name: Run if previous step succeeded
         if: success()
