@@ -16,7 +16,7 @@ jobs:
           do
             attempt=$((attempt+1))
             echo "Attempt $attempt..."
-            ./your_script.sh && break || echo "Attempt $attempt failed."
+            hostname 
             if [ $attempt -ge $max_attempts ]; then
               echo "Job failed after $attempt attempts."
               exit 1
