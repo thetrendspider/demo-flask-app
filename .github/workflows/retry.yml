@@ -2,16 +2,22 @@ name: Example Workflow with Max Retry
 
 on: [push]
 jobs:
-  my-job:
+  deploy:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        retry: [1]
+        retry: [1, 2]
     steps:
       - uses: actions/checkout@v3
-      - name: Run my command
+      - name: Build Application
         run: |
-          if [[ "${{ runner.retry_count }}" -eq 0 ]]; then
-            # Command that might fail
-            my_command
+          # Build commands here
+      - name: Deploy Application
+        run: |
+          if [[ "${{ runner.retry_count }}" -lt "${{ matrix.retry }}" ]]; then
+            # Deployment command
+            aws s3 sync ./dist s3://my-bucket
+          else
+            echo "Deployment failed after ${matrix.retry} retries"
+            exit 1
           fi
