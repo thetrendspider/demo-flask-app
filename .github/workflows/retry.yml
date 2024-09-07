@@ -14,14 +14,7 @@ jobs:
           timeout_minutes: 10
           max_attempts: 3
           command: |
-            echo "Current attempt number: $ATTEMPT_NUMBER"
-            if [[ "$ATTEMPT_NUMBER" == "1" ]]; then
-              echo "This is the first attempt. Failing intentionally."
-              exit 1
-            else
-              echo "This is not the first attempt. Succeeding."
-              exit 0
-            fi
+             npm test
       
       - name: Run if previous step succeeded
         if: success()
