@@ -2,30 +2,16 @@ name: Example Workflow with Max Retry
 
 on: [push]
 jobs:
-  retry_job:
+  my-job:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        retry: [1]
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-      
-      - name: Run task with retry logic
-        uses: nick-fields/retry@v2
-        with:
-          timeout_minutes: 10
-          max_attempts: 3
-          run: |
-             npm test
-      
-      - name: Run if previous step succeeded
-        if: success()
-        run: echo "The task succeeded!"
-      
-      - name: Run if all attempts failed
-        if: failure()
-        run: echo "The task failed after all retry attempts"
-
-      - name: Debug information
-        if: always()
+      - uses: actions/checkout@v3
+      - name: Run my command
         run: |
-          echo "Workflow completed"
-          echo "Job status: ${{ job.status }}"
+          if [[ "${{ runner.retry_count }}" -eq 0 ]]; then
+            # Command that might fail
+            my_command
+          fi
