@@ -7,18 +7,16 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+      - name: Retry automation reset
+        uses: gabrielsev/rerun-workflow@v2
+        with:
+          # Configure the retries (number of times to retry if it fails)
+          retries: 3
+          # The delay between retries in seconds
+          delay: 5
 
       - name: Run job with retry logic
         run: |
-          max_attempts=2
-          attempt=0
-          until [ $attempt -ge $max_attempts ]
-          do
-            attempt=$((attempt+1))
-            echo "Attempt $attempt..."
-            hostname && break
-            if [ $attempt -ge $max_attempts ]; then
-              echo "Job failed after $attempt attempts."
-              exit 1
-            fi
-          done
+         set -e
+         set -x
+         hostname
