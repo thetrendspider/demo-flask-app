@@ -3,30 +3,33 @@ name: Example Workflow with Max Retry
 on: [push]
 
 jobs:
-  build:
+  retry_job:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
+      
+      - name: Run task with retry logic
+        uses: nick-fields/retry@v2
+        with:
+          timeout_minutes: 10
+          max_attempts: 3
+          command: |
+            echo "Current attempt number: $ATTEMPT_NUMBER"
+            set -e 
+            set -x
+            hostname1
+      
+      - name: Run if previous step succeeded
+        if: success()
+        run: echo "The task succeeded!"
+      
+      - name: Run if all attempts failed
+        if: failure()
+        run: echo "The task failed after all retry attempts"
 
-      - name: Run Tests with Retry Logic
-        id: run_tests
+      - name: Debug information
+        if: always()
         run: |
-          MAX_RETRIES=3
-          SUCCESS=0
-          for i in $(seq 1 $MAX_RETRIES); do
-            echo "Attempt $i of $MAX_RETRIES"
-            echo "Hello World"
-            #if npm test; then
-              echo "Tests passed on attempt $i"
-              SUCCESS=1
-              break
-            else
-              echo "Tests failed on attempt $i"
-            fi
-          done
-
-          if [ $SUCCESS -ne 1 ]; then
-            echo "Max retries reached. Failing the job."
-            exit 1
-          fi
+          echo "Workflow completed"
+          echo "Job status: ${{ job.status }}"
