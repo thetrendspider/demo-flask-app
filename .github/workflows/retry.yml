@@ -9,12 +9,18 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Run job with retry logic
-        uses: nick-fields/retry@v1
-        with:
-          max_attempts: 3
-          retry_on: error
-          timeout_seconds: 5
-          command: |
-             set -e
-             set -x
-             hostname
+        id: myStepId1
+        continue-on-error: true
+        run: |
+          set -e
+          set -x 
+          hostname
+      - name: Some action that can fail
+        id: myStepId2
+        if: steps.myStepId1.outcome == 'failure'
+        continue-on-error: true
+        run: |
+          set -e
+          set -x 
+          hostname
+        
