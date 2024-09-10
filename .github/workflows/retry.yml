@@ -11,10 +11,9 @@ jobs:
       - name: Run job with retry logic
         uses: nick-fields/retry@v1
         with:
-          # Configure the number of retry attempts
-          retries: 3
-          # Configure the delay between retries in seconds
-          delay: 10
+          max_attempts: 3
+          retry_on: error
+          timeout_seconds: 5
           command: |
              set -e
              set -x
