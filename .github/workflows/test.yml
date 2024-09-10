@@ -12,6 +12,7 @@ jobs:
       - name: Run task with retry logic
         uses: nick-fields/retry@v2
         with:
+          timeout_minutes: 50
           max_attempts: 3
           command: |
             echo "Current attempt number: $ATTEMPT_NUMBER"
