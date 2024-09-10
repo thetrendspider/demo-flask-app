@@ -15,7 +15,7 @@ jobs:
           retries: 3
           # Configure the delay between retries in seconds
           delay: 10
-        run: |
-         set -e
-         set -x
-         hostname
+          command: |
+             set -e
+             set -x
+             hostname
